@@ -4,7 +4,13 @@ var cheerio = require('cheerio');
 var nodemailer = require('nodemailer');
 
 var config = require('./config');
- 
+
+var MOVIE_PAGE = 'https://drafthouse.com/show/star-wars-the-force-awakens';
+var TICKET_URL = 'https://drafthouse.com/ajax/.showtimes-show/0000/A000010000A000009999';
+var twitterParams = {
+  screen_name: config.twitter.HANDLE
+};
+
 var transporter = nodemailer.createTransport({
   service: config.email.SERVICE,
   auth: {
@@ -19,10 +25,6 @@ var client = new Twitter({
   access_token_key: config.twitter.ACCESS_TOKEN_KEY,
   access_token_secret: config.twitter.ACCESS_TOKEN_SECRET
 });
- 
-var params = {
-  screen_name: config.twitter.HANDLE
-};
 
 function sendMail(subject, text) {
   var mailOptions = {
@@ -42,7 +44,7 @@ function sendMail(subject, text) {
   });
 }
 
-client.get('statuses/user_timeline', params, function(error, tweets){
+client.get('statuses/user_timeline', twitterParams, function(error, tweets){
   var emailBody = '';
 
   if (!error) {
@@ -53,17 +55,20 @@ client.get('statuses/user_timeline', params, function(error, tweets){
     });
 
     if (emailBody !== '') {
-      sendMail('Star Wars Tweets!', emailBody += '<br>Link to star wars ticket page: https://drafthouse.com/show/star-wars-the-force-awakens');
+      sendMail(
+        'New Star Wars Tweets!', 
+        emailBody += '<br>Link to star wars ticket page: ' + MOVIE_PAGE
+      );
     }
   }
 });
 
-request('https://drafthouse.com/ajax/.showtimes-show/0000/A000010000A000009999', function (error, response, body) {
+request(TICKET_URL, function (error, response, body) {
   if (!error && response.statusCode === 200) {
     var $ = cheerio.load(body);
 
     if ($('.Section-heading').text() !== 'Coming Soon') {
-      sendMail('TICKETS ON SALE!!', 'https://drafthouse.com/show/star-wars-the-force-awakens');
+      sendMail('TICKETS ON SALE!!', MOVIE_PAGE);
     }
   }
 });
