@@ -1,0 +1,38 @@
+{
+  "name": "Star Wars Ticket Notifier",
+  "description": "Shoots user an email when the Alamo Drafthouse tweets the word \"Star Wars\", or when the tickets page updates in any way",
+  "repository": "https://github.com/travisbenton/star-wars-tickets-for-sale",
+  "env": {
+    "emailService": {
+      "description": "Email service provider",
+      "value": "Gmail, Yahoo, etc" 
+    },
+    "emailUser": {
+      "description": "Email address",
+      "value": "foo@bar.com" 
+    },
+    "emailPass": {
+      "description": "Email Password",
+      "value": "loremipsum123" 
+    },
+    "twitterHandle": {
+      "description": "Twitter handle whose tweets you want to scan",
+      "value": "Drafthouse" 
+    },
+    "twitterConsumerKey": {
+      "description": "",
+    },
+    "twitterConsumerSecret": {
+      "description": "Twitter consumer secret",
+    },
+    "twitterAccessTokenKey": {
+      "description": "Twitter access token key",
+    },
+    "twitterAccessTokenSecret": {
+      "description": "Twitter access token secret",
+    
+  },
+  "addons": [
+    "scheduler"
+  ]
+}
