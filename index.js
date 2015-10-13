@@ -29,7 +29,7 @@ function sendMail(subject, text) {
     from: config.email.USER,
     to: config.email.USER,
     subject: subject,
-    text: text
+    html: text
   };
 
   // send mail with defined transport object 
@@ -43,12 +43,18 @@ function sendMail(subject, text) {
 }
 
 client.get('statuses/user_timeline', params, function(error, tweets){
+  var emailBody = '';
+
   if (!error) {
     tweets.forEach(function(tweet) {
       if (/\bstar wars\b/i.test(tweet.text)) {
-        sendMail('Star Wars Tweets!', tweet.text += '. https://drafthouse.com/show/star-wars-the-force-awakens');
+        emailBody += tweet.text + '<br>';
       }
     });
+
+    if (emailBody !== '') {
+      sendMail('Star Wars Tweets!', emailBody += '<br>Link to star wars ticket page: https://drafthouse.com/show/star-wars-the-force-awakens');
+    }
   }
 });
 
