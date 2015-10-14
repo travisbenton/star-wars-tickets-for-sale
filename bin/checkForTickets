@@ -5,7 +5,7 @@ var cheerio = require('cheerio');
 var nodemailer = require('nodemailer');
 var firebase = require('firebase');
 
-var database = new firebase('https://twitter-tracker.firebaseio.com/');
+var database = new firebase(process.env.firebaseURL);
 var MOVIE_PAGE = 'https://drafthouse.com/show/star-wars-the-force-awakens';
 var TICKET_URL = 'https://drafthouse.com/ajax/.showtimes-show/0000/A000010000A000009999';
 var twitterParams = {
