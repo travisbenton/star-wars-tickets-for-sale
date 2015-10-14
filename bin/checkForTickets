@@ -55,7 +55,7 @@ client.get('statuses/user_timeline', twitterParams, function(error, tweets){
       }
     });
 
-    if (emailBody !== '') {
+    if (emailBody) {
       sendMail(
         'New Star Wars Tweets!', 
         emailBody += '<br>Link to star wars ticket page: ' + MOVIE_PAGE
