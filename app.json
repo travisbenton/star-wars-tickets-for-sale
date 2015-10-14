@@ -34,6 +34,10 @@
     "twitterAccessTokenSecret": {
       "description": "Twitter access token secret",
       "value": ""
+    },
+    "firebaseURL": {
+      "description": "Firebase url",
+      "value": "https://twitter-tracker.firebaseio.com/"
     }
   },
   "addons": [
