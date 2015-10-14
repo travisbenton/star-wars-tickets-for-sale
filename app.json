@@ -21,15 +21,19 @@
     },
     "twitterConsumerKey": {
       "description": "Twitter consumer key",
+      "value": "" 
     },
     "twitterConsumerSecret": {
       "description": "Twitter consumer secret",
+      "value": "" 
     },
     "twitterAccessTokenKey": {
       "description": "Twitter access token key",
+      "value": "" 
     },
     "twitterAccessTokenSecret": {
-      "description": "Twitter access token secret"
+      "description": "Twitter access token secret",
+      "value": ""
     }
   },
   "addons": [
