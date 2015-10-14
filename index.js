@@ -1,11 +1,14 @@
 var express = require('express');
 var staticContent = require('express-static');
 var Twitter = require('twitter');
+
 var config = require('./config');
+
 var app = express();
 var twitterParams = {
   screen_name: config.twitter.HANDLE,
-  count: 200
+  count: 50,
+  include_rts: false
 };
 var server;
 
@@ -24,20 +27,8 @@ app.get('/', function(request, response, next) {
   });
 
   client.get('statuses/user_timeline', twitterParams, function(error, tweets){
-    var tweetArr = [];
-
     if (!error) {
-      tweets.forEach(function(tweet) {
-        if (/\bstar wars\b/i.test(tweet.text)) {
-          tweetArr.push(tweet.text);
-        }
-      });
-
-      if (!tweetArr.length) {
-        tweetArr.push('No recent Star Wars tweets :(');
-      }
-
-      request.data = tweetArr;
+      request.data = tweets.map(function(tweet) { return tweet.text });
       next();
     }
   });
@@ -48,5 +39,5 @@ app.get('/', function(request, response, next) {
 
 
 server = app.listen(process.env.PORT || 5000, function(){
-    console.log('server is running at %s', server.address().port);
+  console.log('server is running at %s', server.address().port);
 });
