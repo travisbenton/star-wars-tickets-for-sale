@@ -63,6 +63,7 @@ database.once('value', function(event) {
       tweets.forEach(function(tweet) {
         if (/\bstar wars\b/i.test(tweet.text)) {
           emailBody += tweet.text + '<br>';
+          console.log('Matched Tweet = ' + tweet.text);
         }
       });
 
