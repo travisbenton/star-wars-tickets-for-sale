@@ -50,7 +50,9 @@ function sendMail(subject, text) {
 }
 
 database.once('value', function(event) {
-  twitterParams.since_id = event.val().since_id;
+  if (event.val().since_id) {
+    twitterParams.since_id = event.val().since_id;
+  }
 
   client.get('statuses/user_timeline', twitterParams, function(error, tweets){
     var emailBody = '';
