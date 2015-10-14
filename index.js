@@ -1,74 +1,52 @@
+var express = require('express');
+var staticContent = require('express-static');
 var Twitter = require('twitter');
-var request = require('request');
-var cheerio = require('cheerio');
-var nodemailer = require('nodemailer');
-
 var config = require('./config');
-
-var MOVIE_PAGE = 'https://drafthouse.com/show/star-wars-the-force-awakens';
-var TICKET_URL = 'https://drafthouse.com/ajax/.showtimes-show/0000/A000010000A000009999';
+var app = express();
 var twitterParams = {
-  screen_name: config.twitter.HANDLE
+  screen_name: config.twitter.HANDLE,
+  count: 200
 };
+var server;
 
-var transporter = nodemailer.createTransport({
-  service: config.email.SERVICE,
-  auth: {
-    user: config.email.USER,
-    pass: config.email.PASS
-  }
-});
- 
-var client = new Twitter({
-  consumer_key: config.twitter.CONSUMER_KEY,
-  consumer_secret: config.twitter.CONSUMER_SECRET,
-  access_token_key: config.twitter.ACCESS_TOKEN_KEY,
-  access_token_secret: config.twitter.ACCESS_TOKEN_SECRET
-});
+app.use(staticContent(__dirname + '/public'));
 
-function sendMail(subject, text) {
-  var mailOptions = {
-    from: config.email.USER,
-    to: config.email.USER,
-    subject: subject,
-    html: text
-  };
+// views is directory for all template files
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
 
-  // send mail with defined transport object 
-  transporter.sendMail(mailOptions, function(error, info) {
-    if (error) {
-      return console.log(error);
-    }
-
-    console.log('Message sent: ' + info.response);
+app.get('/', function(request, response, next) {
+  var client = new Twitter({
+    consumer_key: config.twitter.CONSUMER_KEY,
+    consumer_secret: config.twitter.CONSUMER_SECRET,
+    access_token_key: config.twitter.ACCESS_TOKEN_KEY,
+    access_token_secret: config.twitter.ACCESS_TOKEN_SECRET
   });
-}
 
-client.get('statuses/user_timeline', twitterParams, function(error, tweets){
-  var emailBody = '';
+  client.get('statuses/user_timeline', twitterParams, function(error, tweets){
+    var tweetArr = [];
 
-  if (!error) {
-    tweets.forEach(function(tweet) {
-      if (/\bstar wars\b/i.test(tweet.text)) {
-        emailBody += tweet.text + '<br>';
+    if (!error) {
+      tweets.forEach(function(tweet) {
+        if (/\bstar wars\b/i.test(tweet.text)) {
+          tweetArr.push(tweet.text);
+        }
+      });
+
+      if (!tweetArr.length) {
+        tweetArr.push('No recent Star Wars tweets :(');
       }
-    });
 
-    if (emailBody !== '') {
-      sendMail(
-        'New Star Wars Tweets!', 
-        emailBody += '<br>Link to star wars ticket page: ' + MOVIE_PAGE
-      );
+      request.data = tweetArr;
+      next();
     }
-  }
+  });
+
+}, function(request, response) {
+  response.render('index', { data: request.data });
 });
 
-request(TICKET_URL, function (error, response, body) {
-  if (!error && response.statusCode === 200) {
-    var $ = cheerio.load(body);
 
-    if ($('.Section-heading').text() !== 'Coming Soon') {
-      sendMail('TICKETS ON SALE!!', MOVIE_PAGE);
-    }
-  }
+server = app.listen(process.env.PORT || 5000, function(){
+    console.log('server is running at %s', server.address().port);
 });
