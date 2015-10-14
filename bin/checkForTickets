@@ -56,6 +56,7 @@ database.once('value', function(event) {
     var emailBody = '';
 
     if (!error) {
+      console.log('checking for tweets...')
 
       // last tweet is always a duplicate of the last check, so remove it.
       tweets = tweets.slice(0, -1);
@@ -63,7 +64,7 @@ database.once('value', function(event) {
       tweets.forEach(function(tweet) {
         if (/\bstar wars\b/i.test(tweet.text)) {
           emailBody += tweet.text + '<br>';
-          console.log('Matched Tweet = ' + tweet.text);
+          console.log('matched tweet!: ' + tweet.text);
         }
       });
 
