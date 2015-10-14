@@ -66,9 +66,8 @@ database.once('value', function(event) {
         }
       });
 
-      database.child('since_id').set(tweets[0].id);
-
-      if (emailBody) {
+      if (tweets.length) {
+        database.child('since_id').set(tweets[0].id);
         sendMail(
           'New Star Wars Tweets!', 
           emailBody += '<br>Link to star wars ticket page: ' + MOVIE_PAGE
