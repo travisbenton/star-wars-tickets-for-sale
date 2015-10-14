@@ -13,14 +13,14 @@
     },
     "emailPass": {
       "description": "Email Password",
-      "value": "loremipsum123" 
+      "value": "Email password" 
     },
     "twitterHandle": {
       "description": "Twitter handle whose tweets you want to scan",
       "value": "Drafthouse" 
     },
     "twitterConsumerKey": {
-      "description": "",
+      "description": "Twitter consumer key",
     },
     "twitterConsumerSecret": {
       "description": "Twitter consumer secret",
@@ -29,8 +29,8 @@
       "description": "Twitter access token key",
     },
     "twitterAccessTokenSecret": {
-      "description": "Twitter access token secret",
-    
+      "description": "Twitter access token secret"
+    }
   },
   "addons": [
     "scheduler"
