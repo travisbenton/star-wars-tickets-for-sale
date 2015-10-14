@@ -5,36 +5,34 @@ var cheerio = require('cheerio');
 var nodemailer = require('nodemailer');
 var firebase = require('firebase');
 
-var config = require('../config');
-
 var database = new firebase('https://twitter-tracker.firebaseio.com/');
 var MOVIE_PAGE = 'https://drafthouse.com/show/star-wars-the-force-awakens';
 var TICKET_URL = 'https://drafthouse.com/ajax/.showtimes-show/0000/A000010000A000009999';
 var twitterParams = {
-  screen_name: config.twitter.HANDLE,
+  screen_name: process.env.twitterHandle,
   count: 50,
   include_rts: false
 };
 
 var transporter = nodemailer.createTransport({
-  service: config.email.SERVICE,
+  service: process.env.emailService,
   auth: {
-    user: config.email.USER,
-    pass: config.email.PASS
+    user: process.env.emailUser,
+    pass: process.env.emailPass
   }
 });
  
 var client = new Twitter({
-  consumer_key: config.twitter.CONSUMER_KEY,
-  consumer_secret: config.twitter.CONSUMER_SECRET,
-  access_token_key: config.twitter.ACCESS_TOKEN_KEY,
-  access_token_secret: config.twitter.ACCESS_TOKEN_SECRET
+  consumer_key: process.env.twitterConsumerKey,
+  consumer_secret: process.env.twitterConsumerSecret,
+  access_token_key: process.env.twitterAccessTokenKey,
+  access_token_secret: process.env.twitterAccessTokenSecret
 });
 
 function sendMail(subject, text) {
   var mailOptions = {
-    from: config.email.USER,
-    to: config.email.USER,
+    from: process.env.emailUser,
+    to: process.env.emailUser,
     subject: subject,
     html: text
   };

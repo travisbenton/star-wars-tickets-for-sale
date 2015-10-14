@@ -4,12 +4,10 @@ var Twitter = require('twitter');
 var request = require('request');
 var cheerio = require('cheerio');
 
-var config = require('./config');
-
 var TICKET_URL = 'https://drafthouse.com/ajax/.showtimes-show/0000/A000010000A000009999';
 var app = express();
 var twitterParams = {
-  screen_name: config.twitter.HANDLE,
+  screen_name: process.env.twitterHandle,
   count: 50,
   include_rts: false
 };
@@ -23,10 +21,10 @@ app.set('view engine', 'ejs');
 
 app.get('/', function(req, resp, next) {
   var client = new Twitter({
-    consumer_key: config.twitter.CONSUMER_KEY,
-    consumer_secret: config.twitter.CONSUMER_SECRET,
-    access_token_key: config.twitter.ACCESS_TOKEN_KEY,
-    access_token_secret: config.twitter.ACCESS_TOKEN_SECRET
+    consumer_key: process.env.twitterConsumerKey,
+    consumer_secret: process.env.twitterConsumerSecret,
+    access_token_key: process.env.twitterAccessTokenKey,
+    access_token_secret: process.env.twitterAccessTokenSecret
   });
 
   client.get('statuses/user_timeline', twitterParams, function(error, tweets){
