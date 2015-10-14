@@ -3,13 +3,17 @@ var Twitter = require('twitter');
 var request = require('request');
 var cheerio = require('cheerio');
 var nodemailer = require('nodemailer');
+var firebase = require('firebase');
 
 var config = require('../config');
 
+var database = new firebase('https://twitter-tracker.firebaseio.com/');
 var MOVIE_PAGE = 'https://drafthouse.com/show/star-wars-the-force-awakens';
 var TICKET_URL = 'https://drafthouse.com/ajax/.showtimes-show/0000/A000010000A000009999';
 var twitterParams = {
-  screen_name: config.twitter.HANDLE
+  screen_name: config.twitter.HANDLE,
+  count: 50,
+  include_rts: false
 };
 
 var transporter = nodemailer.createTransport({
@@ -45,23 +49,33 @@ function sendMail(subject, text) {
   });
 }
 
-client.get('statuses/user_timeline', twitterParams, function(error, tweets){
-  var emailBody = '';
+database.once('value', function(event) {
+  twitterParams.since_id = event.val().since_id;
 
-  if (!error) {
-    tweets.forEach(function(tweet) {
-      if (/\bstar wars\b/i.test(tweet.text)) {
-        emailBody += tweet.text + '<br>';
+  client.get('statuses/user_timeline', twitterParams, function(error, tweets){
+    var emailBody = '';
+
+    if (!error) {
+
+      // last tweet is always a duplicate of the last check, so remove it.
+      tweets = tweets.slice(0, -1);
+
+      tweets.forEach(function(tweet) {
+        if (/\bstar wars\b/i.test(tweet.text)) {
+          emailBody += tweet.text + '<br>';
+        }
+      });
+
+      database.child('since_id').set(tweets[0].id);
+
+      if (emailBody) {
+        sendMail(
+          'New Star Wars Tweets!', 
+          emailBody += '<br>Link to star wars ticket page: ' + MOVIE_PAGE
+        );
       }
-    });
-
-    if (emailBody) {
-      sendMail(
-        'New Star Wars Tweets!', 
-        emailBody += '<br>Link to star wars ticket page: ' + MOVIE_PAGE
-      );
     }
-  }
+  });
 });
 
 request(TICKET_URL, function (error, response, body) {
