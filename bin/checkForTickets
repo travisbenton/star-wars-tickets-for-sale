@@ -89,7 +89,7 @@ request(NEW_TICKET_URL, (err, res, body) => {
     var text = $('.Not-yet').text();
     var notYetMsg = 'Tickets not on sale yet.Check back soon, you must.';
 
-    if (text === notYetMsg) {
+    if (text !== notYetMsg) {
       sendMail('TICKETS ON SALE!!', MOVIE_PAGE);
     } 
   }
@@ -101,7 +101,7 @@ request(TICKET_URL, function (error, response, body) {
     var text = $('.Not-yet').text();
     var notYetMsg = 'Coming Soon';
 
-    if (text === notYetMsg) {
+    if (text !== notYetMsg) {
       sendMail('TICKETS ON SALE!!', MOVIE_PAGE);
     }
   }
