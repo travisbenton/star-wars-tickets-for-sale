@@ -7,7 +7,7 @@ var firebase = require('firebase');
 
 var database = new firebase(process.env.firebaseURL);
 var MOVIE_PAGE = 'For tickets, go here: https://drafthouse.com/show/star-wars-the-force-awakens or here: https://drafthouse.com/starwars/austin';
-var TICKET_URL = 'https://drafthouse.com/ajax/.showtimes-show-starwars/0000/A000010000%7CA000009999';
+var TICKET_URL = 'https://drafthouse.com/ajax/.showtimes-show/0000/A000010000A000009999';
 var NEW_TICKET_URL = 'https://drafthouse.com/ajax/.showtimes-show-starwars/0000/A000010000%7CA000009999';
 var twitterParams = {
   screen_name: process.env.twitterHandle,
