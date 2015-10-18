@@ -6,8 +6,9 @@ var nodemailer = require('nodemailer');
 var firebase = require('firebase');
 
 var database = new firebase(process.env.firebaseURL);
-var MOVIE_PAGE = 'https://drafthouse.com/show/star-wars-the-force-awakens';
-var TICKET_URL = 'https://drafthouse.com/ajax/.showtimes-show/0000/A000010000A000009999';
+var MOVIE_PAGE = 'For tickets, go here: https://drafthouse.com/show/star-wars-the-force-awakens or here: https://drafthouse.com/starwars/austin';
+var TICKET_URL = 'https://drafthouse.com/ajax/.showtimes-show-starwars/0000/A000010000%7CA000009999';
+var NEW_TICKET_URL = 'https://drafthouse.com/ajax/.showtimes-show-starwars/0000/A000010000%7CA000009999';
 var twitterParams = {
   screen_name: process.env.twitterHandle,
   count: 50,
@@ -62,7 +63,7 @@ database.once('value', function(event) {
       tweets = tweets.slice(0, -1);
 
       tweets.forEach(function(tweet) {
-        if (/\bstar wars\b/i.test(tweet.text)) {
+        if (/\b(star wars|starwars)\b/i.test(tweet.text)) {
           emailBody += tweet.text + '<br>';
           console.log('matched tweet!: ' + tweet.text);
         }
@@ -82,11 +83,25 @@ database.once('value', function(event) {
   });
 });
 
+request(NEW_TICKET_URL, (err, res, body) => {
+  if (!err && res.statusCode === 200) {
+    var $ = cheerio.load(body);
+    var text = $('.Not-yet').text();
+    var notYetMsg = 'Tickets not on sale yet.Check back soon, you must.';
+
+    if (text === notYetMsg) {
+      sendMail('TICKETS ON SALE!!', MOVIE_PAGE);
+    } 
+  }
+});
+
 request(TICKET_URL, function (error, response, body) {
   if (!error && response.statusCode === 200) {
     var $ = cheerio.load(body);
+    var text = $('.Not-yet').text();
+    var notYetMsg = 'Coming Soon';
 
-    if ($('.Section-heading').text() !== 'Coming Soon') {
+    if (text === notYetMsg) {
       sendMail('TICKETS ON SALE!!', MOVIE_PAGE);
     }
   }
